@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="es">
 <head>
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive">
@@ -1575,7 +1576,7 @@ try{
   const bytes=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(PACK.nonce),additionalData:new TextEncoder().encode('3OA-Pages-v1')},key,b64(PACK.ct));
   const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
   const html=new TextDecoder().decode(await new Response(stream).arrayBuffer());
-  document.open(); document.write(html);document.close();
+  document.open(); document.write(html.replace(/<head>/i, '<head><link rel="icon" type="image/svg+xml" href="./favicon.svg">'));document.close();
 }catch(err){status.textContent=String(err.message||'Clave incorrecta. Revisa e intenta de nuevo.').includes('decryption')||err.name==='OperationError'?'Clave incorrecta. Vuelve a intentarlo.':String(err.message||'No se pudo abrir el estudio.');button.disabled=false;}
 });
 </script></body></html>
