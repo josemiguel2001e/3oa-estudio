@@ -1578,6 +1578,7 @@ try{
   let html=new TextDecoder().decode(await new Response(stream).arrayBuffer());
   html=html.replace('<strong>24 h</strong>','<strong>34 h</strong>');
   html=html.replace('Horas efectivas estimadas para producción, después de dirección, reuniones, imprevistos y reserva operativa.','José Miguel: 40 horas nominales semanales, 6 horas (15 %) para imprevistos y 34 horas programables.');
+  html=html.replace(/<head>/i,'<head><script defer src="./kpis-integrados.js"></'+'script>');
   document.open(); document.write(html.replace(/<head>/i, '<head><link rel="icon" type="image/svg+xml" href="./favicon.svg">'));document.close();
 }catch(err){status.textContent=String(err.message||'Clave incorrecta. Revisa e intenta de nuevo.').includes('decryption')||err.name==='OperationError'?'Clave incorrecta. Vuelve a intentarlo.':String(err.message||'No se pudo abrir el estudio.');button.disabled=false;}
 });
