@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>3.OA · Operaciones</title>
+<style>
+:root{--bg:#f6f5f1;--paper:#fff;--ink:#1c211e;--muted:#727e76;--rule:#dce0d9;--green:#31584a;--rust:#9e5741;--honey:#8b6b38}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Arial,Helvetica,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer;transition:opacity .15s}button:disabled{opacity:.45;cursor:not-allowed}a{color:var(--green)}[hidden]{display:none!important}
+.wrap{max-width:1120px;margin:auto;padding:0 30px}.top{border-bottom:1px solid var(--rule);background:var(--paper)}.top .wrap{min-height:88px;display:flex;justify-content:space-between;align-items:center;gap:20px}.brand{font-size:33px;font-weight:800;letter-spacing:-.1em;line-height:.9}.brand small{display:block;font-size:8px;letter-spacing:.21em;margin-top:9px}.topright{display:flex;align-items:center;gap:15px}.muted{color:var(--muted)}.kicker{font-size:10px;text-transform:uppercase;letter-spacing:.17em;font-weight:800;color:var(--muted)}.pilot{background:#edf0e8;border:1px solid var(--rule);font-size:11px;padding:8px 13px;margin-top:25px;display:inline-block}.hero{padding:43px 0 32px;display:flex;justify-content:space-between;gap:20px;align-items:end}h1{font-weight:400;letter-spacing:-.075em;font-size:clamp(40px,6.5vw,75px);line-height:.98;margin:10px 0 8px}h2{font-size:26px;letter-spacing:-.055em;font-weight:500;margin:0 0 16px}h3{font-size:20px;letter-spacing:-.04em;margin:8px 0 8px;font-weight:550}p{margin:7px 0}.panel{border:1px solid var(--rule);background:var(--paper);padding:22px 25px}.panel+.panel{margin-top:10px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.metric{background:var(--paper);border:1px solid var(--rule);padding:23px}.metric strong{display:block;font-size:34px;font-weight:400;letter-spacing:-.05em;margin-top:8px}.section{margin-top:43px;margin-bottom:36px}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:15px}.small{font-size:12px}.tiny{font-size:11px}.pill{font-size:10px;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--rule);padding:5px 9px;display:inline-block;color:var(--muted)}.pill.warn{color:var(--rust);border-color:#d7c3bb}.pill.ok{color:var(--green);border-color:#bfd1c6}.name{font-size:20px;letter-spacing:-.04em;font-weight:550;line-height:1.2}.row{display:flex;justify-content:space-between;align-items:center;gap:20px}.gap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.actionline{margin-top:18px;display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid var(--rule);background:var(--paper);padding:11px 15px;color:var(--ink);font-size:12px;font-weight:700}.btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}.btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #447865;outline-offset:2px}.hours{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:11px;color:var(--muted)}.info{margin-top:14px;padding:12px 13px;background:#f8f3e8;border-left:3px solid var(--honey);font-size:12px;line-height:1.55;white-space:pre-wrap}.line{border-top:1px solid var(--rule);padding:15px 0}.line:first-child{border-top:0}.cards{display:grid;gap:10px}.empty{color:var(--muted);padding:19px 2px}.input,textarea,select{width:100%;margin-top:6px;margin-bottom:15px;padding:12px;background:#fff;border:1px solid var(--rule);border-radius:0;color:var(--ink)}label{display:block;font-size:12px;font-weight:700}textarea{resize:vertical;min-height:98px}.modalback{position:fixed;inset:0;background:rgba(15,23,19,.65);z-index:20;display:grid;place-items:center;padding:14px}.modal{width:min(540px,100%);background:var(--paper);max-height:92dvh;overflow-y:auto;padding:25px 30px;box-shadow:0 16px 70px rgba(0,0,0,.15)}.modal .close{font-size:23px;font-weight:400;line-height:1}.status{min-height:19px;color:var(--rust);font-size:12px;margin-top:7px}.login{max-width:480px;margin:90px auto 130px}.login h1{margin-bottom:25px}.divider{height:1px;background:var(--rule);margin:22px 0}.subtle{font-size:12px;color:var(--muted)}details{border-top:1px solid var(--rule)}summary{cursor:pointer;padding:17px 0;font-weight:700}details .line{padding-left:6px}footer{margin-top:70px;padding:30px 0 60px;border-top:1px solid var(--rule);font-size:11px;color:var(--muted)}.notice{border:1px solid #e0d0aa;background:#fbf7e9;padding:15px;font-size:12px;line-height:1.5}.board{display:grid;grid-template-columns:1fr 1fr;gap:10px}.clock{color:var(--green);font-weight:bold}table{width:100%;border-collapse:collapse;font-size:12px}.scroll-x{overflow-x:auto}.scroll-x table{min-width:600px}.schedule-fields{display:grid;grid-template-columns:1fr 1fr;gap:0 15px}th,td{padding:11px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+@media(max-width:720px){.wrap{padding:0 17px}.top .wrap{min-height:78px}.brand{font-size:28px}.topright .kicker{display:none}.hero{display:block;padding:30px 0 25px}.metrics{grid-template-columns:repeat(2,1fr)}.metric{padding:16px}.metric strong{font-size:28px}.panel{padding:17px}.board{grid-template-columns:1fr}.section{margin-top:33px}.modal{padding:19px}.row.mobilecolumn{display:block}.row.mobilecolumn .actionline{margin-top:12px}}
+</style>
+</head><body>
+<header class="top"><div class="wrap"><div class="brand">3.OA<small>ARQUITECTURA / DISEÑO</small></div><div class="topright"><span id="who" class="kicker"></span><button class="btn" id="exit" hidden>Cerrar sesión</button></div></div></header>
+<main class="wrap">
+<section id="login" class="login" hidden><span class="kicker">ÁREA PRIVADA · 3.OA</span><h1>Tu trabajo,<br>en orden.</h1><p class="muted">Entra con la cuenta creada para ti en Supabase.</p><form id="loginForm"><label>Correo electrónico<input class="input" name="email" type="email" autocomplete="username" required></label><label>Contraseña<input class="input" name="password" type="password" autocomplete="current-password" required></label><button class="btn dark" type="submit">Entrar al estudio</button><p class="status" id="loginError"></p></form></section>
+<section id="app" hidden>
+<div class="pilot">3.OA OPERACIONES · Gestión de actividades, tiempos, entregas y capacidad. <a href="./index.html">Consultar cronograma histórico</a>.</div>
+<div class="hero"><div><span class="kicker" id="roleLine"></span><h1 id="headline"></h1><p class="muted" id="lead"></p></div><button class="btn" id="refresh">Actualizar ↻</button></div>
+<div id="metrics" class="metrics"></div>
+<section class="section"><div class="sectionhead"><h2 id="primaryTitle"></h2><span class="subtle" id="primaryCaption"></span></div><div id="primary"></div></section>
+<section class="section"><div class="sectionhead"><h2>Actividades.</h2><button class="btn" id="addTask" hidden>+ Crear actividad</button></div><div id="tasks" class="panel"></div></section>
+<section class="section" id="weeklySection"><div class="sectionhead"><div><h2>Calendario y rendimientos.</h2><p class="subtle">Semana actual en Colombia. Las pruebas no cuentan para los indicadores.</p></div></div><div id="weeklyBoard"></div></section>
+<section class="section"><div class="sectionhead"><h2>Biblioteca.</h2><button class="btn" id="addCatalog" hidden>+ Nueva actividad base</button></div><details><summary>Consultar catálogo de actividades</summary><div class="panel" id="catalog"></div></details></section>
+</section>
+<section id="loading" class="section"><p class="muted">Cargando el estudio…</p></section>
+<footer>3.OA · Operaciones / Entregas, tiempos y capacidad por persona. <span class="muted">El cronograma histórico se conserva sin cambios.</span></footer>
+</main>
+<div id="modalBack" class="modalback" hidden><div class="modal"><div class="row"><h2 id="modalTitle"></h2><button class="btn close" id="closeModal" aria-label="Cerrar">×</button></div><div id="modalBody"></div><p id="modalError" class="status"></p></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+'use strict';
+const CFG={url:'https://yoivymszliwslitfzzci.supabase.co',key:'sb_publishable_o_TdfnhvVUJnNFiyQUpEmQ_Qs8XkXJl'};
+const $=s=>document.querySelector(s), escapeHTML=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const fmt=m=>{m=Math.max(0,Math.round(Number(m)||0));return Math.floor(m/60)+' h '+String(m%60).padStart(2,'0')+' min'};
+const time=s=>new Date(s).toLocaleString('es-CO',{dateStyle:'medium',timeStyle:'short'});
+const db=window.supabase.createClient(CFG.url,CFG.key);
+let user=null,profile=null,tasks=[],sessions=[],submissions=[],reviews=[],catalog=[],team=[],weeklySchedules=[],scheduleExceptions=[],nowTimer=null;
+function status(t){return {ready:'Por iniciar',running:'En curso',paused:'Pausada',submitted:'Pendiente de dirección',changes:'Tiene observaciones',rejected:'No aprobada',approved:'Aprobada'}[t.status]||t.status}
+function lastDelivery(id){return submissions.find(s=>s.task_id===id)}
+function workMinutes(id,kind){return sessions.filter(s=>s.task_id===id&&(!kind||s.kind===kind)).reduce((sum,s)=>sum+Math.max(0,(new Date(s.end_at||Date.now())-new Date(s.start_at))/60000),0)}
+function clearModal(){ $('#modalBack').hidden=true;$('#modalBody').innerHTML='';$('#modalError').textContent=''; }
+function modal(title,body){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalError').textContent='';$('#modalBack').hidden=false}
+function showError(e,selector){console.error(e);$(selector||'#modalError').textContent=e?.message||String(e)}
+function form(body,button){return `<form id="modalForm">${body}<button class="btn dark" type="submit">${button}</button></form>`}
+function input(label,name,optional=false,placeholder=''){return `<label>${label}<input class="input" name="${name}" ${optional?'':'required'} placeholder="${escapeHTML(placeholder)}"></label>`}
+function textarea(label,name){return `<label>${label}<textarea name="${name}" required></textarea></label>`}
+function action(label,what,id,dark=false){return `<button class="btn ${dark?'dark':''}" data-act="${what}" data-id="${escapeHTML(id)}">${label}</button>`}
+const isDirector=()=>profile?.role==='director';
+async function call(q){const r=await q;if(r.error)throw r.error;return r.data}
+async function reload(){
+const [a,b,c,d,e,f,g,h]=await Promise.all([
+ db.from('tasks').select('*,assignee:profiles!tasks_assignee_id_fkey(full_name)').order('created_at',{ascending:false}),
+ db.from('work_sessions').select('*').order('start_at',{ascending:false}),
+ db.from('submissions').select('*').order('created_at',{ascending:false}),
+ db.from('reviews').select('*').order('created_at',{ascending:false}),
+ db.from('activity_catalog').select('*').order('family'),
+ db.from('profiles').select('id,full_name,role'),
+ db.from('weekly_schedules').select('*'),
+ db.from('schedule_exceptions').select('*').order('day',{ascending:false}).limit(300)
+]);
+tasks=await call(a);sessions=await call(b);submissions=await call(c);reviews=await call(d);catalog=await call(e);team=await call(f);weeklySchedules=await call(g);scheduleExceptions=await call(h);
+profile=team.find(p=>p.id===user.id);if(!profile)throw Error('Esta cuenta aún no tiene un perfil de colaborador.');
+render();
+}
+function taskStatusBadge(t){return `<span class="pill ${t.status==='approved'?'ok':['changes','rejected'].includes(t.status)?'warn':''}">${escapeHTML(status(t))}</span>`}
+function card(t,featured=false){const sub=lastDelivery(t.id);const initial=workMinutes(t.id,'initial'),rework=workMinutes(t.id,'rework');
+let actions='';if(isDirector()){
+ if(t.status==='submitted')actions=action('Confirmar entrega','review',t.id,true);
+}else if(t.status==='running')actions=action('Pausar actividad','pause',t.id,true)+action('Enviar entrega','submit',t.id);
+else if(['ready','paused','changes','rejected'].includes(t.status))actions=action(['changes','rejected'].includes(t.status)?'Iniciar corrección':'Iniciar / continuar','start',t.id,true)+(t.work_started?action('Enviar entrega','submit',t.id):'');
+let evidence=sub?.evidence_url&&/^https:\/\//i.test(sub.evidence_url)?`<a href="${escapeHTML(sub.evidence_url)}" target="_blank" rel="noopener noreferrer">Ver enlace de entrega</a>`:'';
+let feedback=['changes','rejected'].includes(t.status)&&t.last_feedback?`<div class="info"><strong>Observaciones de dirección</strong>\n${escapeHTML(t.last_feedback)}</div>`:'';
+return `<div class="${featured?'panel':'line'}"><div class="row mobilecolumn"><div>${taskStatusBadge(t)}<h3>${escapeHTML(t.title)}</h3><div class="subtle">${escapeHTML(t.project_name)} · ${escapeHTML(t.assignee?.full_name||'Equipo')}</div></div><div class="actionline">${actions}</div></div><div class="hours"><span>Producción <strong>${fmt(initial)}</strong></span><span>Reproceso <strong>${fmt(rework)}</strong></span><span>Total <strong>${fmt(initial+rework)}</strong></span>${t.estimate_minutes?`<span>Previsto <strong>${fmt(t.estimate_minutes)}</strong></span>`:''}</div>${feedback}${sub&&t.status==='submitted'?`<p class="tiny">Entrega: ${escapeHTML(sub.note)}</p>`:''}${evidence?`<p class="tiny">${evidence}</p>`:''}${featured&&t.status==='running'?'<p class="clock tiny">Cronómetro en ejecución · Tiempo actualizado al refrescar</p>':''}</div>`}
+function metrics(items){$('#metrics').innerHTML=items.map(v=>`<div class="metric"><span class="kicker">${escapeHTML(v[0])}</span><strong>${escapeHTML(v[1])}</strong></div>`).join('')}
+
+/* 3.OA: calendario colombiano basado en calendario de festivos y ley Emiliani.
+   Los horarios individuales se guardan en Supabase; 0 minutos = día libre. */
+function isoDateUTC(d){return d.toISOString().slice(0,10)}
+function dateUTC(y,m,d){return new Date(Date.UTC(y,m-1,d))}
+function plusDays(date,days){const d=new Date(date.getTime());d.setUTCDate(d.getUTCDate()+days);return d}
+function bogotaToday(){
+ const p=new Intl.DateTimeFormat('en-US',{timeZone:'America/Bogota',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+ const get=x=>p.find(z=>z.type===x).value;
+ return get('year')+'-'+get('month')+'-'+get('day');
+}
+function easterSunday(y){
+ const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,
+ f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),
+ h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,
+ l=(32+2*e+2*i-h-k+700)%7,m=Math.floor((a+11*h+22*l)/451),
+ mon=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+ return dateUTC(y,mon,day);
+}
+function mondayShift(d){const dow=d.getUTCDay();return plusDays(d,(8-dow)%7)}
+function holidaysCO(year){
+ const set=new Set(),add=d=>set.add(isoDateUTC(d)),fixed=(m,d)=>add(dateUTC(year,m,d)),shift=(m,d)=>add(mondayShift(dateUTC(year,m,d)));
+ fixed(1,1);shift(1,6);shift(3,19);
+ const easter=easterSunday(year);add(plusDays(easter,-3));add(plusDays(easter,-2));
+ fixed(5,1);add(mondayShift(plusDays(easter,39)));add(mondayShift(plusDays(easter,60)));add(mondayShift(plusDays(easter,68)));
+ shift(6,29);fixed(7,20);fixed(8,7);shift(8,15);shift(10,12);shift(11,1);shift(11,11);fixed(12,8);fixed(12,25);
+ return set;
+}
+function currentWeek(){
+ const today=bogotaToday(),d=new Date(today+'T12:00:00Z');
+ d.setUTCDate(d.getUTCDate()-((d.getUTCDay()+6)%7));
+ const monday=isoDateUTC(d);
+ const begin=new Date(monday+'T05:00:00Z'),end=new Date(begin.getTime()+7*86400000);
+ const days=Array.from({length:7},(_,i)=>isoDateUTC(plusDays(d,i)));
+ return {today,monday,begin,end,days};
+}
+const asHours=m=>(m/60).toLocaleString('es-CO',{maximumFractionDigits:1})+' h';
+function isTest(t){return /^\s*(PRUEBA|TEST)(\s|_|-)/i.test(t.project_name)||/^\s*(PRUEBA|TEST)(\s|_|-)/i.test(t.title)}
+function scheduleFor(userId,day){return weeklySchedules.find(x=>x.user_id===userId&&x.weekday===day)}
+function exceptionFor(userId,iso){return scheduleExceptions.find(x=>x.user_id===userId&&x.day===iso)}
+function plannedForDay(userId,iso,holidays){
+ const exception=exceptionFor(userId,iso);
+ if(exception)return {minutes:exception.override_minutes,reason:exception.reason};
+ if(holidays.has(iso))return {minutes:0,reason:'Festivo en Colombia'};
+ const day=new Date(iso+'T12:00:00Z').getUTCDay(),r=scheduleFor(userId,day);
+ return {minutes:r?.planned_minutes||0,reason:''};
+}
+function sessionMinutesInWeek(userId,begin,end,kind){
+ const eligible=new Set(tasks.filter(t=>!isTest(t)).map(t=>t.id));
+ return sessions.filter(s=>s.user_id===userId&&eligible.has(s.task_id)&&(!kind||s.kind===kind))
+ .reduce((acc,s)=>{
+   const a=Math.max(new Date(s.start_at).getTime(),begin.getTime()),b=Math.min(new Date(s.end_at||Date.now()).getTime(),end.getTime());
+   return acc+Math.max(0,(b-a)/60000);
+ },0);
+}
+function weeklyStats(p,week,holidays){
+ const days=week.days.map(iso=>({iso,...plannedForDay(p.id,iso,holidays)}));
+ const total=days.reduce((a,b)=>a+b.minutes,0);
+ const buffer=scheduleFor(p.id,1)?.buffer_percent||0;
+ const available=total*(1-buffer/100);
+ const actual=sessionMinutesInWeek(p.id,week.begin,week.end);
+ const rework=sessionMinutesInWeek(p.id,week.begin,week.end,'rework');
+ const approved=tasks.filter(t=>t.assignee_id===p.id&&!isTest(t)&&t.status==='approved'&&t.approved_at&&new Date(t.approved_at)>=week.begin&&new Date(t.approved_at)<week.end).length;
+ return {days,total,buffer,available,actual,rework,approved};
+}
+function renderWeekly(){
+ const week=currentWeek(),holidays=new Set([...holidaysCO(Number(week.monday.slice(0,4))),...holidaysCO(Number(week.days[6].slice(0,4)))]);
+ const people=isDirector()?team:team.filter(p=>p.id===user.id);
+ const weekdays=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+ let html='';
+ for(const p of people){
+  const x=weeklyStats(p,week,holidays);
+  const use=x.available>0?Math.round(100*x.actual/x.available):0;
+  const daily=x.days.map((d,i)=>'<td title="'+escapeHTML(d.reason)+'">'+
+    (holidays.has(d.iso)?'<span class="pill warn" title="Festivo nacional">F</span> ':'')+
+    escapeHTML(asHours(d.minutes))+'</td>').join('');
+  const actions=isDirector()?'<div class="gap"><button class="btn" data-edit-schedule="'+escapeHTML(p.id)+'">Editar horario</button><button class="btn" data-exception="'+escapeHTML(p.id)+'">Ausencia / jornada especial</button></div>':'';
+  html+='<div class="panel" style="margin-bottom:12px"><div class="row mobilecolumn"><div><span class="kicker">'+escapeHTML(p.role==='director'?'Dirección':'Producción')+'</span><h3>'+escapeHTML(p.full_name)+'</h3></div>'+actions+'</div>'+
+    '<div class="metrics" style="margin:12px 0"><div class="metric"><span class="kicker">Capacidad útil · semana</span><strong>'+escapeHTML(asHours(x.available))+'</strong><span class="subtle">Plan '+escapeHTML(asHours(x.total))+(x.buffer?' · '+x.buffer+'% imprevistos':'')+'</span></div>'+
+    '<div class="metric"><span class="kicker">Registrado · sin pruebas</span><strong>'+escapeHTML(asHours(x.actual))+'</strong><span class="subtle">'+use+'% de capacidad (no eficiencia)</span></div>'+
+    '<div class="metric"><span class="kicker">Calidad y cierre</span><strong>'+x.approved+' aprobadas</strong><span class="subtle">Reproceso '+escapeHTML(asHours(x.rework))+'</span></div></div>'+
+    '<div class="scroll-x"><table><thead><tr>'+weekdays.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody><tr>'+daily+'</tr></tbody></table></div></div>';
+ }
+ const events=week.days.filter(d=>holidays.has(d));
+ $('#weeklyBoard').innerHTML='<p class="subtle">Semana del '+escapeHTML(week.monday)+' · Los festivos se descuentan automáticamente; las excepciones registradas prevalecen. '+(events.length?'Festivos: '+events.map(escapeHTML).join(', ')+'.':'')+'</p>'+html+
+  '<p class="subtle">Capacidad disponible ≠ horas trabajadas ≠ productividad. Los rendimientos reales requieren más actividades aprobadas y estimaciones calibradas por complejidad. <a href="./index.html">Ver cronograma histórico</a>.</p>';
+}
+function editSchedule(userId){
+ if(!isDirector())return;
+ const p=team.find(x=>x.id===userId);if(!p)return;
+ const name=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+ const fields=name.map((n,i)=>{
+  const current=scheduleFor(userId,i);
+  return '<label>'+n+' · horas previstas<input class="input" type="number" step="0.5" min="0" max="14" name="day'+i+'" value="'+(current?.planned_minutes||0)/60+'" required></label>';
+ }).join('');
+ modal('Horario · '+p.full_name,form('<p class="subtle">Los festivos oficiales descuentan capacidad de forma automática. La reserva de imprevistos no es tiempo perdido.</p>'+
+  '<div class="schedule-fields">'+fields+'</div><label>Reserva para imprevistos (%)<input class="input" name="buffer" type="number" min="0" max="50" step="1" value="'+(scheduleFor(userId,1)?.buffer_percent||0)+'" required></label>','Guardar horario'));
+ $('#modalForm').onsubmit=async e=>{
+  e.preventDefault();
+  try{
+   const data=new FormData(e.target),buffer=Number(data.get('buffer'));
+   if(!Number.isFinite(buffer)||buffer<0||buffer>50)throw Error('Revisa el porcentaje de imprevistos.');
+   const values=name.map((_,day)=>{
+    const hours=Number(data.get('day'+day));
+    if(!Number.isFinite(hours)||hours<0||hours>14)throw Error('Las jornadas deben estar entre 0 y 14 horas.');
+    return {user_id:userId,weekday:day,planned_minutes:Math.round(hours*60),buffer_percent:buffer,updated_at:new Date().toISOString()};
+   });
+   await call(db.from('weekly_schedules').upsert(values,{onConflict:'user_id,weekday'}));
+   clearModal();await reload();
+  }catch(ex){showError(ex)}
+ };
+}
+function addScheduleException(userId){
+ if(!isDirector())return;
+ const p=team.find(x=>x.id===userId);if(!p)return;
+ modal('Jornada especial · '+p.full_name,form('<p class="subtle">0 horas para ausencia; más horas para una jornada extraordinaria, incluso en festivo. Si ya existe una excepción en la misma fecha, se actualizará.</p>'+
+  '<label>Fecha<input class="input" type="date" name="day" value="'+bogotaToday()+'" required></label>'+
+  '<label>Horas programadas<input class="input" type="number" name="hours" min="0" max="24" step="0.5" required value="0"></label>'+
+  '<label>Motivo<textarea name="reason" maxlength="400" required placeholder="Ej.: Permiso personal / Jornada extraordinaria"></textarea></label>','Guardar excepción'));
+ $('#modalForm').onsubmit=async e=>{
+  e.preventDefault();
+  try{
+   const d=new FormData(e.target),hours=Number(d.get('hours')),reason=String(d.get('reason')).trim();
+   if(!Number.isFinite(hours)||hours<0||hours>24||reason.length<3)throw Error('Revisa las horas y el motivo.');
+   await call(db.from('schedule_exceptions').upsert({user_id:userId,day:String(d.get('day')),override_minutes:Math.round(hours*60),reason},{onConflict:'user_id,day'}));
+   clearModal();await reload();
+  }catch(ex){showError(ex)}
+ };
+}
+
+function render(){const director=isDirector();$('#roleLine').textContent=director?'DIRECCIÓN · PANEL PRIVADO':'PRODUCCIÓN · PANEL PERSONAL';$('#headline').textContent=director?'Lo importante.':'Tu próxima entrega.';$('#lead').textContent=director?'Revisiones primero. Sin ruido innecesario.':'Un trabajo a la vez; cada entrega queda registrada.';$('#who').textContent=profile.full_name;
+$('#addTask').hidden=!director;$('#addCatalog').hidden=!director;
+const mine=director?tasks:tasks.filter(t=>t.assignee_id===user.id),open=mine.filter(t=>t.status!=='approved');
+const total=mine.reduce((x,t)=>x+workMinutes(t.id),0),rework=mine.reduce((x,t)=>x+workMinutes(t.id,'rework'),0);
+if(director){
+const toReview=mine.filter(t=>t.status==='submitted');metrics([['Por confirmar',String(toReview.length)],['Actividades abiertas',String(open.length)],['Reproceso',fmt(rework)]]);
+$('#primaryTitle').textContent='Entregas por confirmar.';$('#primaryCaption').textContent=toReview.length+' por revisar';$('#primary').innerHTML=toReview.length?'<div class="cards">'+toReview.map(t=>card(t,true)).join('')+'</div>':'<div class="panel empty">No tienes entregas pendientes de aprobación.</div>';
+}else{
+const priority={changes:0,rejected:0,running:1,paused:2,ready:3,submitted:4};const work=open.filter(t=>t.status!=='submitted').sort((a,b)=>(priority[a.status]??9)-(priority[b.status]??9));
+const current=work[0],pending=open.filter(t=>t.status==='submitted').length;
+metrics([['En espera de revisión',String(pending)],['Tiempo registrado',fmt(total)],['Reproceso',fmt(rework)]]);
+$('#primaryTitle').textContent='Tu actividad principal.';$('#primaryCaption').textContent=current?'':'Nada pendiente';$('#primary').innerHTML=current?card(current,true):'<div class="panel empty">No tienes trabajo activo asignado. Revisa tus entregas pendientes más abajo.</div>';
+}
+let remaining=director?mine:mine.filter(t=>t.id!==(open.filter(t=>t.status!=='submitted').sort((a,b)=>({changes:0,rejected:0,running:1,paused:2,ready:3}[a.status]??9)-({changes:0,rejected:0,running:1,paused:2,ready:3}[b.status]??9))[0]?.id));
+$('#tasks').innerHTML=remaining.length?`<details><summary>Ver todas las actividades (${remaining.length})</summary>${remaining.map(t=>card(t)).join('')}</details>`:'<div class="empty">Todavía no hay más actividades registradas.</div>';
+renderWeekly();
+const byFam={};for(const c of catalog)(byFam[c.family]??=[]).push(c);
+$('#catalog').innerHTML=Object.entries(byFam).map(([family,items])=>`<div style="margin-bottom:17px"><strong>${escapeHTML(family)}</strong>${items.map(x=>`<div class="tiny line">${escapeHTML(x.name)} <span class="muted">· ${x.provisional?'Provisional':'Consolidada'}${x.baseline_minutes?' · '+fmt(x.baseline_minutes):''}</span></div>`).join('')}</div>`).join('')||'<p class="empty">Sin actividades base.</p>';
+}
+async function begin(id){await call(db.rpc('start_task',{p_task_id:id}));await reload()}
+function pause(id){modal('Justificar la pausa',form(`<label>Motivo<select name="reason" required><option value="dependencia">Faltan insumos o información</option><option value="prioridad">Cambio de prioridad</option><option value="jornada">Fin de jornada / descanso</option><option value="tecnico">Problema técnico</option><option value="reproceso">Corrección de trabajo</option><option value="otro">Otro</option></select></label>${textarea('Explica brevemente por qué','note')}`,'Registrar pausa'));
+$('#modalForm').onsubmit=async e=>{e.preventDefault();try{const f=new FormData(e.target);await call(db.rpc('pause_task',{p_task_id:id,p_reason:f.get('reason'),p_note:String(f.get('note')).trim()}));clearModal();await reload()}catch(error){showError(error)}}}
+function deliver(id){modal('Registrar entrega',form(`<p class="subtle">Indica dónde y cómo entregaste el trabajo. No necesitas un enlace.</p><label>Comentario de entrega<textarea name="note" required maxlength="1500" placeholder="Ej.: Entregado vía WhatsApp al grupo Arq3OA"></textarea></label>`,'Enviar a dirección'));
+$('#modalForm').onsubmit=async e=>{e.preventDefault();try{const f=new FormData(e.target),note=String(f.get('note')).trim();if(!note)throw Error('Escribe dónde y cómo entregaste el trabajo.');await call(db.rpc('submit_task',{p_task_id:id,p_evidence_url:null,p_note:note}));clearModal();await reload()}catch(error){showError(error)}}}
+function judge(id){const delivery=lastDelivery(id);modal('Confirmar entrega',form(`<div class="info"><strong>Comentario de entrega</strong><p>${escapeHTML(delivery?.note||'Sin comentario')}</p>${delivery?.evidence_url?`<a href="${escapeHTML(delivery.evidence_url)}" target="_blank" rel="noopener noreferrer">Ver enlace histórico</a>`:''}</div><label>Decisión<select name="decision"><option value="approved">Sí · Aprobar</option><option value="changes">Tiene observaciones</option><option value="rejected">No · Rechazar entrega</option></select></label><label>Observaciones<textarea name="feedback" placeholder="Obligatorias si la entrega no es aprobada"></textarea></label>`,'Registrar revisión'));
+$('#modalForm').onsubmit=async e=>{e.preventDefault();try{const f=new FormData(e.target),decision=f.get('decision'),feedback=String(f.get('feedback')).trim();if(decision!=='approved'&&!feedback)throw Error('Explica qué debe corregirse.');await call(db.rpc('review_task',{p_task_id:id,p_decision:decision,p_feedback:feedback}));clearModal();await reload()}catch(error){showError(error)}}}
+function createTask(){modal('Crear actividad',form(`${input('Actividad','title')}${input('Nombre del proyecto','project')}<label>Asignar a<select name="assignee" required>${team.filter(x=>x.role==='collaborator').map(x=>`<option value="${escapeHTML(x.id)}">${escapeHTML(x.full_name)}</option>`).join('')}</select></label><label>Actividad base<select name="catalog"><option value="">Sin clasificar</option>${catalog.map(x=>`<option value="${escapeHTML(x.id)}">${escapeHTML(x.family+' · '+x.name)}</option>`).join('')}</select></label><label>Estimación inicial en horas (opcional)<input class="input" type="number" name="estimate" min="0" step="0.25" placeholder="Se irá calibrando con datos reales"></label>`,'Guardar actividad'));
+$('#modalForm').onsubmit=async e=>{e.preventDefault();try{const f=new FormData(e.target);await call(db.from('tasks').insert({title:String(f.get('title')).trim(),project_name:String(f.get('project')).trim(),assignee_id:f.get('assignee'),catalog_id:f.get('catalog')||null,estimate_minutes:f.get('estimate')?Math.round(Number(f.get('estimate'))*60):null,status:'ready'}));clearModal();await reload()}catch(error){showError(error)}}}
+function createCatalog(){modal('Añadir a biblioteca',form(`${input('Familia o rubro','family',false,'Dibujo CAD')}${input('Nombre de la nueva actividad','name',false,'Dibujo de secciones')}<label>Estimación inicial en horas (opcional)<input class="input" type="number" name="estimate" min="0" step="0.25"></label>`,'Crear rubro'));
+$('#modalForm').onsubmit=async e=>{e.preventDefault();try{const f=new FormData(e.target);await call(db.from('activity_catalog').insert({family:String(f.get('family')).trim(),name:String(f.get('name')).trim(),baseline_minutes:f.get('estimate')?Math.round(Number(f.get('estimate'))*60):null,provisional:true}));clearModal();await reload()}catch(error){showError(error)}}}
+async function launch(){try{const r=await db.auth.getSession();if(r.error)throw r.error;user=r.data.session?.user||null;$('#loading').hidden=true;$('#exit').hidden=!user;if(!user){$('#app').hidden=true;$('#login').hidden=false;return}$('#login').hidden=true;$('#app').hidden=false;await reload()}catch(error){$('#loading').hidden=false;$('#loading').innerHTML=`<div class="notice"><strong>No pudimos abrir operaciones.</strong><p>${escapeHTML(error.message)}</p><p>Comprueba que tu cuenta esté registrada en profiles y vuelve a cargar.</p></div>`}}
+$('#loginForm').addEventListener('submit',async e=>{e.preventDefault();const b=e.target.querySelector('button');b.disabled=true;$('#loginError').textContent='';try{const f=new FormData(e.target);const r=await db.auth.signInWithPassword({email:f.get('email'),password:f.get('password')});if(r.error)throw r.error;e.target.reset();await launch()}catch(error){$('#loginError').textContent='No se pudo iniciar sesión. Comprueba correo y contraseña.'}finally{b.disabled=false}});
+$('#exit').onclick=async()=>{await db.auth.signOut();location.reload()};$('#refresh').onclick=()=>reload().catch(e=>alert(e.message));$('#addTask').onclick=createTask;$('#addCatalog').onclick=createCatalog;$('#closeModal').onclick=clearModal;document.addEventListener('keydown',e=>{if(e.key==='Escape')clearModal()});
+document.addEventListener('click',e=>{const edit=e.target.closest('[data-edit-schedule]');if(edit){editSchedule(edit.dataset.editSchedule);return}const exc=e.target.closest('[data-exception]');if(exc){addScheduleException(exc.dataset.exception);return}const b=e.target.closest('[data-act]');if(!b)return;const id=b.dataset.id,act=b.dataset.act;b.disabled=true;const fn={start:begin,pause,submit:deliver,review:judge}[act];if(fn)Promise.resolve().then(()=>fn(id)).catch(ex=>{alert(ex.message)}).finally(()=>{b.disabled=false})});
+launch();
+</script>
+</body></html>
