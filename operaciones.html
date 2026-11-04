@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>3.OA · Operaciones</title>
+<style>
+:root{--bg:#f6f5f1;--paper:#fff;--ink:#1b211c;--muted:#747e76;--line:#dfe2dc;--green:#335c4c;--gold:#916634;--red:#9b4e43}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.shell{max-width:1100px;margin:auto;padding:0 25px}.top{border-bottom:1px solid var(--line);background:var(--paper)}.top .shell{display:flex;justify-content:space-between;align-items:center;padding-top:17px;padding-bottom:17px}.logo{font-size:27px;font-weight:850;letter-spacing:-.09em}.tiny{font-size:11px;color:var(--muted)}.ghost{border:1px solid var(--line);background:transparent;padding:10px 14px}.primary{background:var(--ink);border:1px solid var(--ink);color:white;padding:12px 18px}.light{background:white;border:1px solid var(--line);padding:12px 18px}.danger{color:var(--red)}h1{font-size:clamp(34px,6vw,58px);letter-spacing:-.07em;line-height:1;margin:7px 0 12px;font-weight:550}h2{font-size:22px;letter-spacing:-.04em;margin:0 0 15px}p{line-height:1.55}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.17em;color:var(--muted);font-weight:800}.hero{padding:45px 0 27px;display:flex;justify-content:space-between;gap:20px;align-items:end}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{background:var(--paper);border:1px solid var(--line);padding:18px}.metric b{display:block;font-weight:500;font-size:30px;letter-spacing:-.06em;margin-top:7px}.metric small{color:var(--muted);font-size:11px}.section{padding:30px 0}.panel{border:1px solid var(--line);background:var(--paper);padding:22px;margin-bottom:12px}.task{border-top:1px solid var(--line);padding:17px 0;display:flex;align-items:center;justify-content:space-between;gap:20px}.task:first-of-type{border-top:0}.task strong{display:block;margin:5px 0}.pill{font-size:10px;padding:5px 8px;border:1px solid var(--line);white-space:nowrap;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}input,textarea,select{border:1px solid var(--line);background:#fff;color:var(--ink);padding:12px;width:100%;margin:5px 0 13px}textarea{min-height:90px}label{font-size:12px;font-weight:650}.hide{display:none!important}.modalbg{position:fixed;inset:0;background:#151d1788;display:grid;place-items:center;padding:16px;z-index:10}.modal{background:var(--paper);padding:27px;width:min(520px,100%);max-height:90dvh;overflow:auto}.modal h2{margin-bottom:9px}.alert{padding:13px;border:1px solid #d9b99e;background:#fff8ed;font-size:12px}.empty{padding:22px;color:var(--muted);border-top:1px solid var(--line)}a{color:var(--green)}.row{display:flex;justify-content:space-between;align-items:center;gap:15px}.breakdown{margin-top:9px;color:var(--muted);font-size:12px}.tabs{display:flex;gap:7px;margin-bottom:17px;flex-wrap:wrap}.tabs button{padding:10px 13px;background:transparent;border:1px solid var(--line)}.tabs button.active{background:var(--ink);color:white}.status{font-size:12px;color:var(--muted)}@media(max-width:690px){.grid{grid-template-columns:1fr 1fr}.hero{display:block}.task{display:block}.task .actions{margin-top:12px}.shell{padding:0 16px}.panel{padding:16px}}
+</style></head><body>
+<div class="top"><div class="shell"><div><div class="logo">3.OA</div><div class="eyebrow">Arquitectura / Operaciones</div></div><div class="row"><span class="tiny" id="userlabel"></span><button id="signout" class="ghost hide">Salir</button></div></div></div>
+<main class="shell">
+<section id="setup" class="section hide"><div class="panel"><h1>Conectar operaciones.</h1><p>Esta aplicación requiere la base de datos privada y la autenticación del equipo. No registra información hasta conectarse.</p><div class="alert">Configuración pendiente: crear <code>operaciones-config.js</code> a partir de <code>operaciones-config.example.js</code> y ejecutar el esquema SQL en el servicio de datos. Nunca colocar claves secretas de servidor en el repositorio.</div></div></section>
+<section id="auth" class="section hide"><div class="panel" style="max-width:470px;margin:50px auto"><span class="eyebrow">Acceso del estudio</span><h1>Entrar.</h1><form id="login"><label>Correo del equipo<input id="email" type="email" required autocomplete="email"></label><label>Contraseña<input id="password" type="password" required autocomplete="current-password"></label><button class="primary">Entrar</button><p id="loginerror" class="danger" role="alert"></p></form></div></section>
+<section id="app" class="hide"><header class="hero"><div><div class="eyebrow" id="roleline">Gestión</div><h1 id="hello">Tu trabajo, claro.</h1><div class="muted" id="subtitle">Una acción principal a la vez.</div></div><button class="ghost" id="refresh">Actualizar ↻</button></header>
+<div class="grid" id="metrics"></div><section class="section" id="attention"><h2 id="attentionTitle">Lo que necesita tu atención</h2><div id="attentionList" class="panel"></div></section>
+<section class="section"><div class="row"><h2>Actividades</h2><button id="newTask" class="light hide">+ Nueva actividad</button></div><div class="tabs" id="tabs"><button data-filter="active" class="active">Activas</button><button data-filter="all">Todas</button><button data-filter="done">Aprobadas</button></div><div id="tasks" class="panel"></div></section>
+<section class="section" id="catalogSection"><div class="row"><h2>Biblioteca de actividades</h2><button id="newCatalog" class="light hide">+ Añadir rubro</button></div><div id="catalog" class="panel"></div><p class="tiny">Las nuevas actividades comienzan como provisionales. Sus estimaciones se consolidan después de reunir entregas comparables y aprobadas.</p></section>
+</section></main><div class="modalbg hide" id="overlay"><div class="modal"><div class="row"><h2 id="modalTitle"></h2><button id="close" class="ghost" aria-label="Cerrar">×</button></div><div id="modalBody"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="./operaciones-config.js" onerror="void 0"></script>
+<script>
+'use strict';
+const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>{let m=Math.max(0,Math.round(Number(n)||0));return Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')+'m'};
+const now=()=>new Date().toISOString();let db,me,profile,tasks=[],catalog=[],sessions=[],submissions=[],reviews=[],filter='active';
+const show=id=>{['setup','auth','app'].forEach(x=>$('#'+x).classList.toggle('hide',x!==id))};
+const err=e=>{console.error(e);alert(e?.message||String(e))};
+const request=async(p)=>{if(p.error)throw p.error;return p.data};
+const duration=s=>Math.round((new Date(s.end_at||now())-new Date(s.start_at))/60000);
+const taskMinutes=(id,kind)=>sessions.filter(s=>s.task_id===id&&(!kind||s.kind===kind)).reduce((sum,s)=>sum+duration(s),0);
+const weekHours=()=>{const d=new Date(),mon=new Date(d);mon.setDate(d.getDate()-(d.getDay()+6)%7);mon.setHours(0,0,0,0);return sessions.filter(s=>s.user_id===me.id&&new Date(s.start_at)>=mon).reduce((n,s)=>n+duration(s),0)};
+const btn=(title,action,id,variant='light')=>'<button class="'+variant+'" data-act="'+action+'" data-id="'+esc(id)+'">'+title+'</button>';
+function modal(title,html){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=html;$('#overlay').classList.remove('hide')}
+function close(){ $('#overlay').classList.add('hide') }
+$('#close').onclick=close;
+function field(label,name,required=true,placeholder=''){return '<label>'+label+'<input name="'+name+'" '+(required?'required':'')+' placeholder="'+esc(placeholder)+'"></label>'}
+function textfield(label,name){return '<label>'+label+'<textarea name="'+name+'" required></textarea></label>'}
+function form(html,submit='Guardar'){return '<form id="actionForm">'+html+'<p id="formError" class="danger"></p><button class="primary">'+submit+'</button></form>'}
+const taskName=t=>esc(t.title)+'<div class="tiny">'+esc(t.project_name||'Sin proyecto')+' · '+esc(t.assignee?.full_name||'Equipo')+'</div>';
+async function refresh(){
+const [a,b,c,d,e,f]=await Promise.all([
+db.from('tasks').select('*,assignee:profiles!tasks_assignee_id_fkey(full_name)').order('created_at',{ascending:false}),
+db.from('activity_catalog').select('*').order('name'),
+db.from('work_sessions').select('*'),
+db.from('submissions').select('*').order('created_at',{ascending:false}),
+db.from('reviews').select('*').order('created_at',{ascending:false}),
+db.from('profiles').select('id,full_name,role').eq('id',me.id).single()]);
+tasks=await request(a);catalog=await request(b);sessions=await request(c);submissions=await request(d);reviews=await request(e);profile=await request(f);render();
+}
+const latest=t=>submissions.find(s=>s.task_id===t.id);
+const running=t=>sessions.find(s=>s.task_id===t.id&&!s.end_at);
+const status=t=>({ready:'Lista',running:'En ejecución',paused:'Pausada',submitted:'Por revisar',changes:'Con observaciones',rejected:'No aceptada',approved:'Aprobada'})[t.status]||t.status;
+function render(){
+const admin=profile.role==='director';
+$('#roleline').textContent=admin?'DIRECCIÓN / CONTROL':'PRODUCCIÓN / MI ESPACIO';
+$('#hello').textContent=admin?'Dirección, sin ruido.':'Tu siguiente entrega.';
+$('#subtitle').textContent=admin?'Revisa lo pendiente. Lo demás sigue su curso.':'Inicia, pausa con motivo y entrega evidencia.';
+$('#userlabel').textContent=profile.full_name;
+$('#newTask').classList.toggle('hide',!admin);$('#newCatalog').classList.toggle('hide',!admin);
+let mine=admin?tasks:tasks.filter(t=>t.assignee_id===me.id);
+const approvals=tasks.filter(t=>t.status==='submitted');
+const active=mine.filter(t=>!['approved'].includes(t.status));
+const repro=mine.reduce((s,t)=>s+taskMinutes(t.id,'rework'),0),total=mine.reduce((s,t)=>s+taskMinutes(t.id),0);
+const cards=admin?[['Por confirmar',approvals.length],['Activas',active.length],['Horas registradas',fmt(total)],['Reproceso',fmt(repro)]]:[['En curso',active.filter(t=>t.status==='running').length],['Entregas por revisar',mine.filter(t=>t.status==='submitted').length],['Horas esta semana',fmt(weekHours())],['Reproceso',fmt(repro)]];
+$('#metrics').innerHTML=cards.map(x=>'<div class="metric"><small>'+x[0]+'</small><b>'+x[1]+'</b></div>').join('');
+$('#attentionTitle').textContent=admin?'Entregas por confirmar':'Tu siguiente acción';
+let attention=admin?approvals:mine.filter(t=>['changes','rejected','running','paused','ready'].includes(t.status)).sort((a,b)=>({changes:0,rejected:0,running:1,paused:2,ready:3}[a.status]??9)-({changes:0,rejected:0,running:1,paused:2,ready:3}[b.status]??9)).slice(0,1);
+$('#attentionList').innerHTML=attention.length?attention.map(t=>card(t,true)).join(''):'<div class="empty">'+(admin?'Sin entregas pendientes.':'No tienes actividades que requieran acción.')+'</div>';
+let listed=mine.filter(t=>filter==='all'||(filter==='done'?t.status==='approved':t.status!=='approved'));
+$('#tasks').innerHTML=listed.length?listed.map(t=>card(t,false)).join(''):'<div class="empty">Sin actividades en esta vista.</div>';
+$('#catalog').innerHTML=catalog.length?catalog.map(c=>'<div class="task"><div><strong>'+esc(c.name)+'</strong><span class="tiny">'+esc(c.family)+' · '+(c.provisional?'Provisional':'Consolidada')+'</span></div><span class="pill">'+(c.baseline_minutes?fmt(c.baseline_minutes):'Sin referencia')+'</span></div>').join(''):'<div class="empty">La biblioteca está vacía.</div>';
+}
+function card(t,focus){
+let admin=profile.role==='director',sub=latest(t);
+let actions=admin?(t.status==='submitted'?btn('Revisar entrega','review',t.id,'primary'):''):(t.status==='running'?btn('Pausar','pause',t.id,'primary')+btn('Enviar entrega','submit',t.id):['ready','paused','changes','rejected'].includes(t.status)?btn(['changes','rejected'].includes(t.status)?'Iniciar corrección':'Iniciar / reanudar','start',t.id,'primary')+btn('Enviar entrega','submit',t.id):'');
+let extra=['changes','rejected'].includes(t.status)?'<p class="alert">'+esc(t.last_feedback||'Revisar observaciones de dirección')+'</p>':'';
+return '<div class="task"><div><span class="pill">'+esc(status(t))+'</span><strong>'+esc(t.title)+'</strong><div class="tiny">'+esc(t.project_name)+' · '+esc(t.assignee?.full_name||'')+'</div><div class="breakdown">Inicial '+fmt(taskMinutes(t.id,'initial'))+' · Reproceso '+fmt(taskMinutes(t.id,'rework'))+' · Total '+fmt(taskMinutes(t.id))+(t.estimate_minutes?' · Previsto '+fmt(t.estimate_minutes):'')+'</div>'+extra+(sub?.evidence_url?'<div class="tiny"><a href="'+esc(sub.evidence_url)+'" target="_blank" rel="noopener noreferrer">Ver evidencia de entrega</a></div>':'')+'</div><div class="actions">'+actions+'</div></div>';
+}
+async function updateTask(id,changes){await request(await db.from('tasks').update({...changes,updated_at:now()}).eq('id',id))}
+async function start(id){
+const t=tasks.find(x=>x.id===id);if(sessions.some(s=>s.user_id===me.id&&!s.end_at))return alert('Primero pausa la actividad que ya tienes en ejecución.');
+const type=['changes','rejected'].includes(t.status)?'rework':t.work_started?'initial':'initial';
+await request(await db.from('work_sessions').insert({task_id:id,user_id:me.id,kind:type,start_at:now()}));
+await updateTask(id,{status:'running',work_started:true});await refresh();
+}
+async function pause(id){
+modal('Justificar pausa',form('<label>Motivo<select name="reason" required><option value="dependencia">Esperando información / insumos</option><option value="prioridad">Cambio de prioridad</option><option value="reproceso">Corrección</option><option value="jornada">Fin de jornada / descanso</option><option value="tecnico">Problema técnico</option><option value="otro">Otro</option></select></label>'+textfield('Explica la pausa','note'),'Registrar pausa'));
+$('#actionForm').onsubmit=async e=>{e.preventDefault();try{const f=new FormData(e.target),s=running(tasks.find(t=>t.id===id));await request(await db.from('work_sessions').update({end_at:now(),pause_reason:f.get('reason'),pause_note:f.get('note')}).eq('id',s.id));await updateTask(id,{status:'paused'});close();await refresh()}catch(ex){err(ex)}};
+}
+async function submit(id){
+modal('Enviar a dirección',form(field('Enlace al archivo o carpeta de evidencia','url',true,'https://...')+textfield('Descripción del entregable','note'),'Enviar para revisión'));
+$('#actionForm').onsubmit=async e=>{e.preventDefault();try{const f=new FormData(e.target),url=String(f.get('url'));if(!/^https:\/\//i.test(url))throw Error('Usa un enlace HTTPS verificable.');const s=running(tasks.find(t=>t.id===id));if(s)await request(await db.from('work_sessions').update({end_at:now()}).eq('id',s.id));await request(await db.from('submissions').insert({task_id:id,submitted_by:me.id,evidence_url:url,note:f.get('note')}));await updateTask(id,{status:'submitted'});close();await refresh()}catch(ex){$('#formError').textContent=ex.message}};
+}
+async function review(id){
+const sub=latest(tasks.find(t=>t.id===id));if(!sub)return alert('No hay entrega asociada.');
+modal('Confirmar entrega',form('<p class="tiny">Evidencia: <a href="'+esc(sub.evidence_url)+'" target="_blank" rel="noopener noreferrer">Abrir archivo</a></p><label>Decisión<select name="decision"><option value="approved">Sí, aprobar</option><option value="changes">Tiene observaciones</option><option value="rejected">No, entrega no aceptada</option></select></label><label>Observaciones<textarea name="feedback" placeholder="Obligatorias cuando no se aprueba"></textarea></label>','Registrar revisión'));
+$('#actionForm').onsubmit=async e=>{e.preventDefault();try{const f=new FormData(e.target),d=f.get('decision'),feedback=String(f.get('feedback')).trim();if(d!=='approved'&&!feedback)throw Error('Explica qué debe corregirse.');await request(await db.from('reviews').insert({submission_id:sub.id,task_id:id,reviewer_id:me.id,decision:d,feedback}));await updateTask(id,{status:d,last_feedback:feedback,approved_at:d==='approved'?now():null});close();await refresh()}catch(ex){$('#formError').textContent=ex.message}};
+}
+function newTask(){
+modal('Nueva actividad',form(field('Nombre de actividad','title')+field('Proyecto','project')+'<label>Asignar a<select name="assignee" id="assignee"></select></label><label>Rubro<select name="catalog" id="catalogSelect"><option value="">Sin clasificar</option></select></label><label>Estimación inicial (minutos)<input type="number" name="estimate" min="0"></label>','Crear actividad'));
+db.from('profiles').select('id,full_name').then(x=>{if(!x.error)$('#assignee').innerHTML=x.data.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.full_name)+'</option>').join('')});
+$('#catalogSelect').insertAdjacentHTML('beforeend',catalog.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>').join(''));
+$('#actionForm').onsubmit=async e=>{e.preventDefault();try{const f=new FormData(e.target);await request(await db.from('tasks').insert({title:f.get('title'),project_name:f.get('project'),assignee_id:f.get('assignee'),catalog_id:f.get('catalog')||null,estimate_minutes:Number(f.get('estimate'))||null,status:'ready'}));close();await refresh()}catch(ex){err(ex)}};
+}
+function newCatalog(){
+modal('Nuevo rubro',form(field('Familia','family',true,'Dibujo CAD')+field('Actividad','name',true,'Dibujo de secciones')+'<label>Estimación de referencia (minutos, opcional)<input type="number" name="estimate" min="0"></label>','Añadir a biblioteca'));
+$('#actionForm').onsubmit=async e=>{e.preventDefault();try{const f=new FormData(e.target);await request(await db.from('activity_catalog').insert({family:f.get('family'),name:f.get('name'),baseline_minutes:Number(f.get('estimate'))||null,provisional:true}));close();await refresh()}catch(ex){err(ex)}};
+}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]');if(!b)return;try{b.disabled=true;const id=b.dataset.id;({start,pause,submit,review})[b.dataset.act]?.(id)?.catch(err)}catch(ex){err(ex)}});
+$('#newTask').onclick=newTask;$('#newCatalog').onclick=newCatalog;$('#refresh').onclick=()=>refresh().catch(err);
+document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));render()});
+$('#signout').onclick=async()=>{await db.auth.signOut();location.reload()};
+async function init(){if(!window.OPERACIONES_CONFIG?.url||!window.OPERACIONES_CONFIG?.anonKey){show('setup');return}db=supabase.createClient(window.OPERACIONES_CONFIG.url,window.OPERACIONES_CONFIG.anonKey);const {data:{session}}=await db.auth.getSession();if(!session){show('auth');return}me=session.user;$('#signout').classList.remove('hide');show('app');try{await refresh()}catch(e){$('#app').innerHTML='<div class="panel"><h2>No se puede cargar el espacio</h2><p>'+esc(e.message)+'</p></div>'}}
+$('#login').onsubmit=async e=>{e.preventDefault();const {error}=await db.auth.signInWithPassword({email:$('#email').value,password:$('#password').value});if(error){$('#loginerror').textContent='No se pudo iniciar sesión. Comprueba tus credenciales.';return}init()};
+init().catch(err);
+</script></body></html>
