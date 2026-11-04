@@ -19,7 +19,8 @@
 <div class="hero"><div><span class="kicker" id="roleLine"></span><h1 id="headline"></h1><p class="muted" id="lead"></p></div><button class="btn" id="refresh">Actualizar ↻</button></div>
 <div id="metrics" class="metrics"></div>
 <section class="section"><div class="sectionhead"><h2 id="primaryTitle"></h2><span class="subtle" id="primaryCaption"></span></div><div id="primary"></div></section>
-<section class="section"><div class="sectionhead"><h2>Actividades.</h2><button class="btn" id="addTask" hidden>+ Crear actividad</button></div><div id="tasks" class="panel"></div></section>
+<section class="section" id="projectsSection" hidden><div class="sectionhead"><div><h2>Proyectos y avance.</h2><p class="subtle">Actividades registradas en Operaciones; las pruebas están excluidas. Un proyecto sin actividades cargadas aún no figura aquí.</p></div></div><div id="projectBoard"></div></section>
+<section class="section"><div class="sectionhead"><h2>Actividades.</h2><button class="btn" id="addTask" hidden>+ Crear actividad</button></div><div class="panel"><div class="row" style="margin-bottom:12px;align-items:center;gap:12px"><label style="flex:1;max-width:360px">Filtrar por proyecto<select id="projectFilter" class="input"><option value="">Todos los proyectos</option></select></label><span class="subtle" id="filterCount"></span></div><div id="tasks"></div></div></section>
 <section class="section" id="weeklySection"><div class="sectionhead"><div><h2>Calendario y rendimientos.</h2><p class="subtle">Semana actual en Colombia. Las pruebas no cuentan para los indicadores.</p></div></div><div id="weeklyBoard"></div></section>
 <section class="section"><div class="sectionhead"><h2>Biblioteca.</h2><button class="btn" id="addCatalog" hidden>+ Nueva actividad base</button></div><details><summary>Consultar catálogo de actividades</summary><div class="panel" id="catalog"></div></details></section>
 </section>
@@ -35,7 +36,7 @@ const $=s=>document.querySelector(s), escapeHTML=s=>String(s??'').replace(/[&<>"
 const fmt=m=>{m=Math.max(0,Math.round(Number(m)||0));return Math.floor(m/60)+' h '+String(m%60).padStart(2,'0')+' min'};
 const time=s=>new Date(s).toLocaleString('es-CO',{dateStyle:'medium',timeStyle:'short'});
 const db=window.supabase.createClient(CFG.url,CFG.key);
-let user=null,profile=null,tasks=[],sessions=[],submissions=[],reviews=[],catalog=[],team=[],weeklySchedules=[],scheduleExceptions=[],nowTimer=null;
+let user=null,profile=null,tasks=[],sessions=[],submissions=[],reviews=[],catalog=[],team=[],weeklySchedules=[],scheduleExceptions=[],nowTimer=null,projectFilterValue="";
 function status(t){return {ready:'Por iniciar',running:'En curso',paused:'Pausada',submitted:'Pendiente de dirección',changes:'Tiene observaciones',rejected:'No aprobada',approved:'Aprobada'}[t.status]||t.status}
 function lastDelivery(id){return submissions.find(s=>s.task_id===id)}
 function workMinutes(id,kind){return sessions.filter(s=>s.task_id===id&&(!kind||s.kind===kind)).reduce((sum,s)=>sum+Math.max(0,(new Date(s.end_at||Date.now())-new Date(s.start_at))/60000),0)}
@@ -202,6 +203,36 @@ function addScheduleException(userId){
  };
 }
 
+function renderProjects(){
+ const el=$('#projectsSection');el.hidden=!isDirector();if(!isDirector())return;
+ const groups=new Map();
+ for(const t of tasks.filter(t=>!isTest(t))){
+  const key=t.project_name.trim()||'Sin proyecto';
+  if(!groups.has(key))groups.set(key,[]);
+  groups.get(key).push(t);
+ }
+ if(!groups.size){$('#projectBoard').innerHTML='<div class="panel empty">Todavía no hay actividades reales suficientes para mostrar el avance por proyecto.</div>';return;}
+ const ordered=[...groups.entries()].sort((a,b)=>a[0].localeCompare(b[0],'es'));
+ $('#projectBoard').innerHTML='<div class="board">'+ordered.map(([name,items])=>{
+  const approved=items.filter(x=>x.status==='approved').length;
+  const active=items.filter(x=>['running','paused','changes','rejected'].includes(x.status)).length;
+  const pending=items.filter(x=>x.status==='submitted').length;
+  const ready=items.filter(x=>x.status==='ready').length;
+  const pct=Math.round(100*approved/items.length);
+  const worked=items.reduce((sum,x)=>sum+workMinutes(x.id),0);
+  return '<div class="panel"><div class="row"><h3>'+escapeHTML(name)+'</h3><strong>'+pct+'%</strong></div><div style="height:7px;background:var(--rule);margin:12px 0;border-radius:6px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--green)"></div></div><p class="subtle">'+items.length+' actividades · '+approved+' aprobadas · '+active+' en trabajo · '+pending+' por revisar · '+ready+' por iniciar</p><p class="tiny">Tiempo registrado: '+fmt(worked)+'</p></div>';
+ }).join('')+'</div><p class="subtle">Este porcentaje representa actividades aprobadas sobre actividades registradas, no avance físico, económico ni contractual.</p>';
+}
+function renderTaskFilter(items){
+ const select=$('#projectFilter');
+ const names=[...new Set(items.map(t=>t.project_name))].sort((a,b)=>a.localeCompare(b,'es'));
+ if(projectFilterValue&&!names.includes(projectFilterValue))projectFilterValue='';
+ select.innerHTML='<option value="">Todos los proyectos</option>'+names.map(name=>'<option value="'+escapeHTML(name)+'">'+escapeHTML(name)+'</option>').join('');
+ select.value=projectFilterValue;
+ const visible=items.filter(t=>!projectFilterValue||t.project_name===projectFilterValue);
+ $('#filterCount').textContent=visible.length+' actividades';
+ $('#tasks').innerHTML=visible.length?'<details open><summary>Ver actividades ('+visible.length+')</summary>'+visible.map(t=>card(t)).join('')+'</details>':'<div class="empty">No hay actividades para este filtro.</div>';
+}
 function render(){const director=isDirector();$('#roleLine').textContent=director?'DIRECCIÓN · PANEL PRIVADO':'PRODUCCIÓN · PANEL PERSONAL';$('#headline').textContent=director?'Lo importante.':'Tu próxima entrega.';$('#lead').textContent=director?'Revisiones primero. Sin ruido innecesario.':'Un trabajo a la vez; cada entrega queda registrada.';$('#who').textContent=profile.full_name;
 $('#addTask').hidden=!director;$('#addCatalog').hidden=!director;
 const mine=director?tasks:tasks.filter(t=>t.assignee_id===user.id),open=mine.filter(t=>t.status!=='approved');
@@ -217,7 +248,7 @@ metrics([['En espera de revisión',String(pending)],['Tiempo registrado',fmt(tot
 $('#primaryTitle').textContent='Tu actividad principal.';$('#primaryCaption').textContent=current?'':'Nada pendiente';$('#primary').innerHTML=current?card(current,true):'<div class="panel empty">No tienes trabajo activo asignado. Revisa tus entregas pendientes más abajo.</div>';
 }
 let remaining=director?mine:mine.filter(t=>t.id!==(open.filter(t=>t.status!=='submitted').sort((a,b)=>({changes:0,rejected:0,running:1,paused:2,ready:3}[a.status]??9)-({changes:0,rejected:0,running:1,paused:2,ready:3}[b.status]??9))[0]?.id));
-$('#tasks').innerHTML=remaining.length?`<details><summary>Ver todas las actividades (${remaining.length})</summary>${remaining.map(t=>card(t)).join('')}</details>`:'<div class="empty">Todavía no hay más actividades registradas.</div>';
+renderTaskFilter(remaining);renderProjects();
 renderWeekly();
 const byFam={};for(const c of catalog)(byFam[c.family]??=[]).push(c);
 $('#catalog').innerHTML=Object.entries(byFam).map(([family,items])=>`<div style="margin-bottom:17px"><strong>${escapeHTML(family)}</strong>${items.map(x=>{const samples=tasks.filter(t=>t.catalog_id===x.id&&t.status==='approved'&&!isTest(t)).map(t=>workMinutes(t.id)).filter(m=>m>0).sort((a,b)=>a-b);const mid=Math.floor(samples.length/2);const median=samples.length?(samples.length%2?samples[mid]:(samples[mid-1]+samples[mid])/2):null;return `<div class="tiny line">${escapeHTML(x.name)} <span class="muted">· ${samples.length?('Mediana '+fmt(median)+' · '+samples.length+' aprobadas'+(samples.length<5?' (muestra pequeña)':'')):(x.provisional?'Provisional · sin datos reales':'Sin aprobaciones')}${x.baseline_minutes?' · Base '+fmt(x.baseline_minutes):''}</span></div>`}).join('')}</div>`).join('')||'<p class="empty">Sin actividades base.</p>';
@@ -235,7 +266,7 @@ function createCatalog(){modal('Añadir a biblioteca',form(`${input('Familia o r
 $('#modalForm').onsubmit=async e=>{e.preventDefault();try{const f=new FormData(e.target);await call(db.from('activity_catalog').insert({family:String(f.get('family')).trim(),name:String(f.get('name')).trim(),baseline_minutes:f.get('estimate')?Math.round(Number(f.get('estimate'))*60):null,provisional:true}));clearModal();await reload()}catch(error){showError(error)}}}
 async function launch(){try{const r=await db.auth.getSession();if(r.error)throw r.error;user=r.data.session?.user||null;$('#loading').hidden=true;$('#exit').hidden=!user;if(!user){$('#app').hidden=true;$('#login').hidden=false;return}$('#login').hidden=true;$('#app').hidden=false;await reload()}catch(error){$('#loading').hidden=false;$('#loading').innerHTML=`<div class="notice"><strong>No pudimos abrir operaciones.</strong><p>${escapeHTML(error.message)}</p><p>Comprueba que tu cuenta esté registrada en profiles y vuelve a cargar.</p></div>`}}
 $('#loginForm').addEventListener('submit',async e=>{e.preventDefault();const b=e.target.querySelector('button');b.disabled=true;$('#loginError').textContent='';try{const f=new FormData(e.target);const r=await db.auth.signInWithPassword({email:f.get('email'),password:f.get('password')});if(r.error)throw r.error;e.target.reset();await launch()}catch(error){$('#loginError').textContent='No se pudo iniciar sesión. Comprueba correo y contraseña.'}finally{b.disabled=false}});
-$('#exit').onclick=async()=>{await db.auth.signOut();location.reload()};$('#refresh').onclick=()=>reload().catch(e=>alert(e.message));$('#addTask').onclick=createTask;$('#addCatalog').onclick=createCatalog;$('#closeModal').onclick=clearModal;document.addEventListener('keydown',e=>{if(e.key==='Escape')clearModal()});
+$('#exit').onclick=async()=>{await db.auth.signOut();location.reload()};$('#refresh').onclick=()=>reload().catch(e=>alert(e.message));$('#addTask').onclick=createTask;$('#projectFilter').onchange=e=>{projectFilterValue=e.target.value;render()};$('#addCatalog').onclick=createCatalog;$('#closeModal').onclick=clearModal;document.addEventListener('keydown',e=>{if(e.key==='Escape')clearModal()});
 document.addEventListener('click',e=>{const edit=e.target.closest('[data-edit-schedule]');if(edit){editSchedule(edit.dataset.editSchedule);return}const exc=e.target.closest('[data-exception]');if(exc){addScheduleException(exc.dataset.exception);return}const b=e.target.closest('[data-act]');if(!b)return;const id=b.dataset.id,act=b.dataset.act;b.disabled=true;const fn={start:begin,pause,submit:deliver,review:judge}[act];if(fn)Promise.resolve().then(()=>fn(id)).catch(ex=>{alert(ex.message)}).finally(()=>{b.disabled=false})});
 launch();
 // Refrescar el tablero sin cerrar ventanas ni interrumpir formularios abiertos.
