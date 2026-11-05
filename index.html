@@ -322,26 +322,65 @@ function projectDeleteAction(n){
 }
 
 
-const photoProjectIds={P1:'L17',P2:'L07',P3:'SILCAS',P4:'B14',P5:'B30',P6:'FOR',P7:'PNIEB',P8:'MILLA',P9:'SEN',P10:'SOTO08',P11:'SFE',P12:'LLG'};
-function photoUploadBar(){return isDirector()?'<div class="action-group" style="margin:12px 0"><label class="btn subtle" for="import3oaPhotos" style="cursor:pointer">Importar fotografías identificadas</label><input id="import3oaPhotos" type="file" accept="image/jpeg,image/png" multiple style="display:none"><span class="fine">Selecciona juntas las 12 imágenes con sus nombres F1_P7, F2_P3, etc.</span></div>':''}
+
+const confirmedPhotoIds={F1:'PNIEB',F2:'SILCAS',F3:'L17',F4:'SOTO08',F5:'SFE',F6:'LLG',F7:'MILLA',F8:'SEN',F9:'L07',F10:'B14',F11:'FOR',F12:'B30'};
+function photoUploadBar(){
+ if(!isDirector())return '';
+ var missing=data.projects.filter(function(p){return !p.archived_at&&!photoFor(p)}).length;
+ return '<div class="action-group" style="margin:12px 0;align-items:center">'+
+ '<label class="btn dark" for="import3oaPhotos" style="cursor:pointer">Importar fotografías identificadas</label>'+
+ '<input id="import3oaPhotos" type="file" accept=".zip,image/jpeg,image/png" multiple style="display:none">'+
+ '<span class="fine">'+missing+' proyectos sin fotografía · Admite el ZIP 3OA_fotografias_CORREGIDAS.zip directamente, sin descomprimir</span></div>';
+}
+async function unpack3OAPhotos(files){
+ var entries=Array.from(files),zips=entries.filter(function(f){return /\.zip$/i.test(f.name)});
+ if(!zips.length)return entries;
+ if(zips.length!==1||entries.length!==1)throw Error('Selecciona un solo archivo ZIP a la vez.');
+ if(!window.JSZip){
+  await new Promise(function(resolve,reject){
+   var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+   sc.onload=resolve;sc.onerror=function(){reject(new Error('No pudo descargarse el lector ZIP. Intenta importar las fotografías JPG individuales.'))};
+   document.head.appendChild(sc);
+  });
+ }
+ var archive=await window.JSZip.loadAsync(zips[0]),photos=[];
+ for(var key of Object.keys(archive.files)){
+  if(!/\.jpe?g$/i.test(key)||archive.files[key].dir)continue;
+  var blob=await archive.files[key].async('blob');
+  photos.push(new File([blob],key.split('/').pop(),{type:'image/jpeg'}));
+ }
+ return photos;
+}
 async function importProjectImages(files){
  if(!isDirector()||!files||!files.length)return;
- var entries=Array.from(files),invalid=entries.filter(function(file){return !file.name.match(/_P(1[0-2]|[1-9])_/i)||!file.type.startsWith('image/')});
- if(invalid.length){alert('Selecciona los JPG del paquete 3.OA, sin cambiar sus nombres. Archivos no reconocidos: '+invalid.map(function(f){return f.name}).join(', '));return}
  await safe(async function(){
-  var completed=0;
+  var entries=await unpack3OAPhotos(files);
+  if(!entries.length)throw Error('No se encontraron fotografías JPEG en el archivo.');
+  var invalid=entries.filter(function(file){return !/^F(1[0-2]|[1-9])_/i.test(file.name)||!file.type.startsWith('image/')});
+  if(invalid.length)throw Error('Imágenes sin numeración F1 a F12: '+invalid.map(function(f){return f.name}).join(', '));
+  var seen=new Set(),completed=0;
   for(var f of entries){
-   var ref='P'+f.name.match(/_P(1[0-2]|[1-9])_/i)[1],id=photoProjectIds[ref],p=data.projects.find(function(x){return x.id===id});
-   if(!p)throw Error('No se encontró el proyecto '+ref);
+   var code='F'+f.name.match(/^F(1[0-2]|[1-9])_/i)[1];
+   if(seen.has(code))throw Error('La fotografía '+code+' está duplicada.');
+   seen.add(code);
+   var id=confirmedPhotoIds[code],p=data.projects.find(function(x){return x.id===id});
+   if(!p)throw Error('No se encontró el proyecto de '+code);
    if(f.size>4*1024*1024)throw Error('Imagen demasiado grande: '+f.name+'. Usa los JPG optimizados del paquete.');
-   var dataUrl=await new Promise(function(resolve,reject){var reader=new FileReader();reader.onload=function(){resolve(reader.result)};reader.onerror=function(){reject(new Error('No se pudo leer '+f.name))};reader.readAsDataURL(f)});
+   var dataUrl=await new Promise(function(resolve,reject){
+    var reader=new FileReader();
+    reader.onload=function(){resolve(reader.result)};
+    reader.onerror=function(){reject(new Error('No se pudo leer '+f.name))};
+    reader.readAsDataURL(f);
+   });
    var key='3OA_PORTAFOLIO_'+id;
-   var m=await api.from('project_media').upsert({visual_key:key,data_url:dataUrl,updated_at:new Date().toISOString()},{onConflict:'visual_key'});if(m.error)throw new Error(f.name+': '+m.error.message);
-   var u=await api.from('projects').update({visual_key:key}).eq('id',id).select('id');if(u.error||!u.data||u.data.length!==1)throw new Error('No se pudo vincular la fotografía de '+p.name);
+   var m=await api.from('project_media').upsert({visual_key:key,data_url:dataUrl,updated_at:new Date().toISOString()},{onConflict:'visual_key'});
+   if(m.error)throw new Error(f.name+': '+m.error.message);
+   var u=await api.from('projects').update({visual_key:key}).eq('id',id).select('id');
+   if(u.error||!u.data||u.data.length!==1)throw new Error('No se pudo vincular la fotografía de '+p.name);
    completed++;
   }
   data.media=[];
-  alert(completed+' fotografías vinculadas a sus proyectos.');
+  alert(completed+' fotografías publicadas y vinculadas correctamente. F10 = Casa 14, F11 = Atalaya Foret.');
  });
 }
 function projects(){if(selectedProject)return projectDetail(selectedProject);var ps=data.projects.filter(function(p){return showArchived?!!p.archived_at:!p.archived_at}).filter(function(p){return !filter||(p.name+' '+p.description+' '+p.category).toLowerCase().includes(filter.toLowerCase())}).sort(portfolioCompare);return '<div class="portfolio-top"><span><strong>'+data.projects.filter(function(p){return !p.is_future&&!p.archived_at}).length+'</strong> proyectos de estudio</span><span><strong>'+data.projects.filter(function(p){return p.is_future&&!p.archived_at}).length+'</strong> futuros</span><span><strong>'+data.tasks.length+'</strong> actividades</span></div><div class="section-row"><h2 class="section-title">Portafolio completo.</h2><div class="fine">Arquitectura, interiores y urbanismo</div></div><div class="filters"><input class="field" id="searchTasks" type="search" value="'+esc(filter)+'" placeholder="Buscar proyecto"></div>'+photoUploadBar()+'<div class="portfolio-indicators"><span><i></i> Esperando feedback o acta</span><span><i class="review"></i> Feedback pendiente por revisar</span><span>Blanco y negro: 100% aprobado</span></div><div class="portfolio-grid">'+ps.map(function(p,i){var header=(i===0||portfolioGroup(p)!==portfolioGroup(ps[i-1]))?'<div class="portfolio-group-label">'+esc(portfolioGroup(p))+'</div>':'';var ts=data.tasks.filter(function(t){return t.project_name===p.name}),closed=ts.filter(function(t){return t.status==='approved'}).length;return header+'<article class="portfolio-card '+(p.archived_at?'archived-project':'')+'" data-action="projectOpen" data-project="'+esc(p.name)+'" tabindex="0" role="button"><div class="portfolio-photo">'+portfolioFeedbackIndicator(p)+(photoFor(p)?'<img loading="lazy" class="'+(projectFinished(p)?'completed-photo':'')+'" src="'+photoFor(p)+'" alt="'+esc(p.name)+'">':'<div class="portfolio-empty">Imagen pendiente</div>')+'</div><div class="portfolio-meta"><span>'+esc(p.category)+' · '+esc(p.phase)+'</span><span>'+esc(p.priority)+'</span></div><h3>'+esc(p.name)+'</h3><p class="fine">'+esc(p.description)+'</p><div class="portfolio-foot"><span>'+esc(p.state)+(p.is_future?' · FUTURO':'')+'</span><span>'+closed+' / '+ts.length+' aprobadas</span></div><div class="progress" style="width:100%"><i style="width:'+(ts.length?Math.round(closed/ts.length*100):0)+'%"></i></div></article>'}).join('')+'</div>'}
